@@ -1,0 +1,31 @@
+<div class="main-header-left d-none d-lg-block">
+  <div class="logo-wrapper"><a ><img class="blur-up lazyloaded"
+        src="assets/sssss.PNG" alt="" style="height: 140px;margin-top: 30px;"></a></div> 
+</div>
+<div class="sidebar custom-scrollbar"  style="margin-top: 50px;">
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-4">
+        <a
+          href="#"
+          class="list-group-item list-group-item-action py-2 ripple"
+          aria-current="true"
+        >
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard : {{currentuser.role}}</span>
+        </a>
+        <a routerLink="/D/dashboard/diplome" class="list-group-item list-group-item-action py-2 ripple "
+        *ngIf="currentuser.role !='Admin'">
+          <i class="fas fa-chart-area fa-fw me-3"></i><span>Diplomes</span>
+        </a>
+        <a routerLink="/D/etablissemnt/etablissement-crud" class="list-group-item list-group-item-action py-2 ripple"
+          *ngIf="currentuser.role !=='TitulaireDiplome' &&currentuser.role !=='Recruteur' "><i class="fas fa-lock fa-fw me-3"></i><span>Etablissement</span></a
+        >
+        <a routerLink="/D/users/users-crud" class="list-group-item list-group-item-action py-2 ripple"
+        *ngIf="currentuser.role !=='TitulaireDiplome' && currentuser.role !=='Recruteur'"><i class="fas fa-chart-line fa-fw me-3"></i><span>Utilisateurs</span></a
+        >
+ 
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+</div>

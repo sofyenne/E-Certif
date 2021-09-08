@@ -1,0 +1,128 @@
+
+<!-- Container-fluid starts-->
+<p-toast></p-toast>
+<div class="container-fluid"  >
+    <div class="card">
+        <div class="card-header">
+            <h5>Gérer Diplome</h5>
+        </div>
+        <div class="card-body">        
+<div class="card">
+
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left"*ngIf = "currentuser.role !=='TitulaireDiplome' && currentuser.role !== 'Recruteur'">
+            <button  pButton pRipple label="Nouveau" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Effacer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelecteds()" [disabled]="!selectedDatas || !selectedDatas.length"></button>
+
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="diplome" [rows]="6" [paginator]="true" [globalFilterFields]="['_id','titre' , 'dateObtunation' , 'numCin']"
+        [(selection)]="selectedDatas" [rowHover]="true" dataKey="_id" styleClass="p-datatable-responsive-demo"
+        currentPageReportTemplate="Affichage de {first} à {last} entrées sur {totalRecords}" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Gérer</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="id,date,titre , cin" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>#</th>
+                <th>Id</th>
+                <th > titre </th>
+                <th >titulaire </th>
+                <th> numCin</th>
+                <th> date</th>
+                <th> etablisement</th>
+               
+                
+            
+
+                
+
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                </td>
+                <td>{{data._id}}</td>
+                <td>{{data.titre}}</td>
+                
+                
+                    <td>{{data.titulaire}}</td>
+                    <td >{{data.numCin}}</td>
+                    
+              
+                <td>{{data.dateObtunation | date: 'dd/MM/yyyy hh:mm' }}</td>
+                <ng-container *ngFor = "let item of etablissements">
+                <td *ngIf= "data.etablissement == item._id">{{item.nomEtablissement}}</td>
+                </ng-container>
+               
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="edit(data)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete(data)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                Au total, il y a {{diplome ? diplome.length : 0 }} .
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="dataDialog" [style]="{width: '450px'}" header="Etablissement Details" [modal]="true" [maximizable]="true"  styleClass="p-fluid"
+[breakpoints]="{'960px': '75vw'}"  [baseZIndex]="10000" 
+    [draggable]="false" 
+>
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="prenom">Titre</label>
+            <input type="text" pInputText id="text" [(ngModel)]="data.titre" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.titre">titre est requis.</small>
+        </div>
+        <div class="p-field">
+            <label for="role">Etablissement</label><br>
+            <select  class="form-control"[(ngModel)] ="data.etablissement">
+            <ng-container *ngFor = "let item of etablissements">
+                <option [ngValue]="item._id">{{item.nomEtablissement}}</option>
+              </ng-container>
+            </select>
+        </div>
+        <div class="p-field">
+            <label for="role">titulaire</label><br>
+            <select name="" id="" class="form-control"[(ngModel)]="data.user">
+            <ng-container *ngFor = "let item of users" >
+                <option *ngIf="item.role =='TitulaireDiplome'" [ngValue]="item._id">{{item.nom}}</option>
+              </ng-container>
+            </select>
+        </div>
+        <div class="p-field">
+            <label for="prenom">dateDecreation</label>
+            <input type="date" pInputText id="create_date" [(ngModel)]="data.dateObtunation" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.create_date">date est requis.</small>
+        </div>
+
+
+
+    </ng-template>
+    
+    <ng-template *ngIf = "currentuser.role !='TitulaireDiplome'" pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"(click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveOrupdate(data)" > </button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+         
+        </div>
+    </div>
+</div>

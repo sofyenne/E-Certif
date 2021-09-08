@@ -1,0 +1,278 @@
+
+<!-- Container-fluid starts-->
+<p-toast></p-toast>
+<div class="container-fluid" *ngIf="currentuser.role ==='Admin'" >
+    <div class="card">
+        <div class="card-header">
+            <h5>Gérer Etablissements</h5>
+        </div>
+        <div class="card-body">        
+<div class="card">
+
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button  pButton pRipple label="Nouveau" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Effacer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelecteds()" [disabled]="!selectedDatas || !selectedDatas.length"></button>
+       
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="datas" [rows]="6" [paginator]="true" [globalFilterFields]="['nomEtablissement','email','tel']"
+        [(selection)]="selectedDatas" [rowHover]="true" dataKey="_id" styleClass="p-datatable-responsive-demo"
+        currentPageReportTemplate="Affichage de {first} à {last} entrées sur {totalRecords}" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Gérer</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="nom or email or tel" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>#</th>
+                <th > nomEtablissement </th>
+                <th >email </th>
+                <th> Tel</th>
+                <th> fax</th>
+                <th> create_date</th>
+                <th>responsable</th>
+                
+                
+            
+
+                
+
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                </td>
+               
+                <td>{{data.nomEtablissement}}</td>
+                <td>{{data.email}}</td>
+                <td>{{data.tel}}</td>
+                <td>{{data.fax}}</td>
+                <td>{{data.create_date | date: 'dd/MM/yyyy hh:mm' }}</td>
+                <ng-container *ngFor = "let item of dataResponsable">
+                <td *ngIf="data.responsable==item._id"> {{item.nom}}</td>
+               </ng-container>
+
+               
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="edit(data)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="delete(data)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                Au total, il y a {{datas ? datas.length : 0 }} .
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="dataDialog" [style]="{width: '450px'}" header="Etablissement Details" [modal]="true" [maximizable]="true"  styleClass="p-fluid"
+[breakpoints]="{'960px': '75vw'}"  [baseZIndex]="10000" 
+    [draggable]="false" 
+>
+    <ng-template pTemplate="content">
+        
+        <div class="p-field">
+            <label for="role">Responsable</label><br>
+            <select name="" id="" class="form-control"[(ngModel)]="data.responsable">
+            <ng-container *ngFor = "let item of dataResponsable" >
+                <option *ngIf="item.role=='ResponsableEtablissement'" [ngValue]="item._id">{{item.nom}}</option>
+              </ng-container>
+            </select>
+        </div>
+
+        <div class="p-field">
+            <label for="email">email</label>
+            <input type="text" pInputText id="email" [(ngModel)]="data.email"  autofocus />
+  
+        </div>
+         
+        <div class="p-field">
+            <label for="nom">NomEtablissement</label>
+            <input type="text" pInputText id="nomEtablissement" [(ngModel)]="data.nomEtablissement" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.nomEtablissement">Nom est requis.</small>
+        </div>
+
+        <div class="p-field">
+            <label for="prenom">Tel</label>
+            <input type="text" pInputText id="tel" [(ngModel)]="data.tel" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.tel">Prénom est requis.</small>
+        </div>
+
+        <div class="p-field">
+            <label for="prenom">Fax</label>
+            <input type="text" pInputText id="fax" [(ngModel)]="data.fax" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.fax">Prénom est requis.</small>
+        </div>
+
+        
+        <div class="p-field">
+            <label for="prenom">dateDecreation</label>
+            <input type="date" pInputText id="create_date" [(ngModel)]="data.create_date" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.create_date">date est requis.</small>
+        </div>
+
+
+
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveOrupdate(data)" > </button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+         
+        </div>
+    </div>
+</div>
+
+
+<!--role responsable etablisement-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="currentuser.role ==='ResponsableEtablissement'" >
+    <div class="card">
+        <div class="card-header">
+            <h5>Etablissements</h5>
+        </div>
+        <div class="card-body">        
+<div class="card">
+
+    
+
+    <p-table  #dt [value]="datas" [rows]="6" [paginator]="true" [globalFilterFields]="['nom','reference','gsm'] "
+        [(selection)]="selectedDatas" [rowHover]="true" dataKey="_id" styleClass="p-datatable-responsive-demo"
+        currentPageReportTemplate="Affichage de {first} à {last} entrées sur {totalRecords}" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Gérer</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header" >
+            <tr>
+                <th>#</th>
+                <th > nomEtablissement </th>
+                <th >email </th>
+                <th> Tel</th>
+                <th> fax</th>
+                <th> create_date</th>
+                <th>responsable</th>
+                
+                
+            
+
+                
+
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data >
+            <tr *ngIf="currentuser._id==data.responsable">
+                <td>
+                    <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                </td>
+               
+                <td>{{data.nomEtablissement}}</td>
+                <td>{{data.email}}</td>
+                <td>{{data.tel}}</td>
+                <td>{{data.fax}}</td>
+                <td>{{data.create_date | date: 'dd/MM/yyyy hh:mm' }}</td>
+                <ng-container *ngFor = "let item of dataResponsable">
+                <td *ngIf="data.responsable==item._id"> {{item.nom}}</td>
+               </ng-container>
+
+               
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="edit(data)"></button>
+                   
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                Au total, il y a {{datas ? datas.length : 0 }} .
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="dataDialog" [style]="{width: '450px'}" header="Etablissement Details" [modal]="true" [maximizable]="true"  styleClass="p-fluid"
+[breakpoints]="{'960px': '75vw'}"  [baseZIndex]="10000" 
+    [draggable]="false" 
+>
+    <ng-template pTemplate="content">
+        
+        <div class="p-field">
+            <label for="role">Responsable</label><br>
+            <select name="" id="" class="form-control"[(ngModel)]="data.responsable">
+            <ng-container *ngFor = "let item of dataResponsable" >
+                <option  *ngIf="currentuser._id==item._id" [ngValue]="item._id">{{item.nom}}</option>
+              </ng-container>
+            </select>
+        </div>
+
+        <div class="p-field">
+            <label for="email">email</label>
+            <input type="text" pInputText id="email" [(ngModel)]="data.email"  autofocus />
+  
+        </div>
+         
+        <div class="p-field">
+            <label for="nom">NomEtablissement</label>
+            <input type="text" pInputText id="nomEtablissement" [(ngModel)]="data.nomEtablissement" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.nomEtablissement">Nom est requis.</small>
+        </div>
+
+        <div class="p-field">
+            <label for="prenom">Tel</label>
+            <input type="text" pInputText id="tel" [(ngModel)]="data.tel" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.tel">Prénom est requis.</small>
+        </div>
+
+        <div class="p-field">
+            <label for="prenom">Fax</label>
+            <input type="text" pInputText id="fax" [(ngModel)]="data.fax" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.fax">Prénom est requis.</small>
+        </div>
+
+        
+        <div class="p-field">
+            <label for="prenom">dateDecreation</label>
+            <input type="date" pInputText id="create_date" [(ngModel)]="data.create_date" required autofocus />
+            <small class="p-invalid" *ngIf="submitted && !data.create_date">date est requis.</small>
+        </div>
+
+
+
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveOrupdate(data)" > </button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+         
+        </div>
+    </div>
+</div>
+
+
